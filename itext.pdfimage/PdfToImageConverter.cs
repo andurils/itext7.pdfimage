@@ -125,8 +125,8 @@ namespace itext.pdfimage
                     else if (chunk.Value is Models.PathChunk pathChunk)
                     {
                         Trace.WriteLine("pathChunk pathChunk pathChunk");
-                        Pen newPen = new Pen(Color.Black);//定义一个画笔，黄色 
-                        g.DrawLine(newPen, (float)pathChunk.StartPath.x, (float)pathChunk.StartPath.y, (float)pathChunk.EndPath.x, (float)pathChunk.EndPath.y);//绘制直线
+                        Pen newPen = new Pen(Color.Black);//定义一个画笔
+                        g.DrawLine(newPen, ((float)pathChunk.StartPath.x).PointsToPixels(), bmp.Height - ((float)pathChunk.StartPath.y).PointsToPixels(), ((float)pathChunk.EndPath.x).PointsToPixels(), bmp.Height - ((float)pathChunk.EndPath.y).PointsToPixels());//绘制直线
 
                     }
                 }
