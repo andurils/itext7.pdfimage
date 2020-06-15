@@ -12,5 +12,9 @@ namespace itext.pdfimage.Models
         public FontStyle FontStyle { get; set; }
         public float SpaceWidth { get; set; }
         public Color Color { get; internal set; }
+        /// <summary>
+        /// 字体缩放
+        /// </summary>
+        public float TextZoom { get; internal set; }
     }
 }

@@ -12,7 +12,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
-
+using System.Diagnostics;
 
 namespace itext.pdfimage
 {
@@ -51,19 +51,24 @@ namespace itext.pdfimage
         {
             var rotation = pdfPage.GetRotation();
 
+            //var size = currentPage.GetPageSizeWithRotation();
+            var size = pdfPage.GetPageSize();
+            var width = size.GetWidth().PointsToPixels();
+            var height = size.GetHeight().PointsToPixels();
+
             var chunkDictionairy = new SortedDictionary<float, IChunk>();
 
             FilteredEventListener listener = new FilteredEventListener();
             listener.AttachEventListener(new TextListener(chunkDictionairy, IncreaseCounter));
             listener.AttachEventListener(new ImageListener(chunkDictionairy, IncreaseCounter));
+            listener.AttachEventListener(new PathListener(chunkDictionairy, IncreaseCounter, height));
             PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
             processor.ProcessPageContent(pdfPage);
 
-            //var size = currentPage.GetPageSizeWithRotation();
-            var size = pdfPage.GetPageSize();
-
-            var width = size.GetWidth().PointsToPixels();
-            var height = size.GetHeight().PointsToPixels();
+            ////var size = currentPage.GetPageSizeWithRotation();
+            //var size = pdfPage.GetPageSize(); 
+            //var width = size.GetWidth().PointsToPixels();
+            //var height = size.GetHeight().PointsToPixels();
 
             Bitmap bmp = new Bitmap(width, height);
             using (Graphics g = Graphics.FromImage(bmp))
@@ -94,10 +99,11 @@ namespace itext.pdfimage
                     }
                     else if (chunk.Value is Models.TextChunk textChunk)
                     {
+
+                        //textChunk.Rect.GetHeight
                         var chunkX = textChunk.Rect.GetX().PointsToPixels();
                         var chunkY = bmp.Height - textChunk.Rect.GetY().PointsToPixels();
-
-                        var fontSize = textChunk.FontSize.PointsToPixels();
+                        var fontSize = (textChunk.FontSize * textChunk.TextZoom).PointsToPixels();
 
                         Font font;
                         try
@@ -108,13 +114,20 @@ namespace itext.pdfimage
                         {
                             //log error
 
-                            font = new Font("Calibri", 11, textChunk.FontStyle, GraphicsUnit.Pixel);
+                            font = new Font("Calibri", 12, textChunk.FontStyle, GraphicsUnit.Pixel);
                         }
 
                         g.TranslateTransform(chunkX, chunkY, MatrixOrder.Append);
 
                         //g.DrawString(textChunk.Text, font, new SolidBrush(textChunk.Color), chunkX, chunkY);
                         g.DrawString(textChunk.Text, font, new SolidBrush(textChunk.Color), 0, 0);
+                    }
+                    else if (chunk.Value is Models.PathChunk pathChunk)
+                    {
+                        Trace.WriteLine("pathChunk pathChunk pathChunk");
+                        Pen newPen = new Pen(Color.Black);//定义一个画笔，黄色 
+                        g.DrawLine(newPen, (float)pathChunk.StartPath.x, (float)pathChunk.StartPath.y, (float)pathChunk.EndPath.x, (float)pathChunk.EndPath.y);//绘制直线
+
                     }
                 }
 

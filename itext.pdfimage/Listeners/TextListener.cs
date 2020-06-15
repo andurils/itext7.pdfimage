@@ -36,6 +36,19 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
 
             var fontStyle = font.GetFontNames().GetFontStyle();
 
+            //字体缩放
+            var zoom = 1f;
+
+            try
+            {
+                zoom = renderInfo.GetTextMatrix().Get(0);
+            }
+            catch (Exception ex)
+            {
+
+                zoom = 1f;
+            }
+
             float curFontSize = renderInfo.GetFontSize();
 
             float key = counter;
@@ -59,7 +72,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
 
                 var fillColor = character.GetFillColor();
                 var colors = fillColor.GetColorValue();
-                if(colors.Length == 1)
+                if (colors.Length == 1)
                 {
                     color = Color.FromArgb((int)(255 * (1 - colors[0])), Color.Black);
                 }
@@ -98,12 +111,14 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
                 var currentChunk = new itext.pdfimage.Models.TextChunk()
                 {
                     Text = letter,
+                    TextZoom = zoom,
                     Rect = rect,
                     FontFamily = fontName,
                     FontSize = (int)curFontSize,
                     FontStyle = fontStyle,
                     Color = color,
-                    SpaceWidth = character.GetSingleSpaceWidth() / 2f
+                    //SpaceWidth = character.GetSingleSpaceWidth() / 2f
+                    SpaceWidth = character.GetSingleSpaceWidth()
                 };
 
                 chunkDictionairy.Add(key, currentChunk);
