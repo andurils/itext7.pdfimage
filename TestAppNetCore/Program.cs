@@ -13,7 +13,7 @@ namespace TestAppNetCore
         {
             
             var testList = new Dictionary<string, int>();
-            testList.Add(@"D:\attachment\data\1eb7ab119371c1337afb14c63c33df85\P020190524348747199779.pdf",25);
+            testList.Add(@"D:\attachment\data\1eb7ab119371c1337afb14c63c33df85\P020190524348747199779.pdf", 25);
             testList.Add(@"D:\attachment\data\0944012e8e050a147562483a70f285fb\P020190923591889171962.pdf", 105);
 
             foreach (var dict in testList)

@@ -61,7 +61,7 @@ namespace itext.pdfimage
             FilteredEventListener listener = new FilteredEventListener();
             listener.AttachEventListener(new TextListener(chunkDictionairy, IncreaseCounter));
             listener.AttachEventListener(new ImageListener(chunkDictionairy, IncreaseCounter));
-            listener.AttachEventListener(new PathListener(chunkDictionairy, IncreaseCounter, height));
+            listener.AttachEventListener(new PathListener(chunkDictionairy, IncreaseCounter, size.GetHeight()));
             PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
             processor.ProcessPageContent(pdfPage);
 
@@ -126,7 +126,15 @@ namespace itext.pdfimage
                     {
                         Trace.WriteLine("pathChunk pathChunk pathChunk");
                         Pen newPen = new Pen(Color.Black);//定义一个画笔
-                        g.DrawLine(newPen, ((float)pathChunk.StartPath.x).PointsToPixels(), bmp.Height - ((float)pathChunk.StartPath.y).PointsToPixels(), ((float)pathChunk.EndPath.x).PointsToPixels(), bmp.Height - ((float)pathChunk.EndPath.y).PointsToPixels());//绘制直线
+                        float x1 = ((float)pathChunk.StartPath.x).PointsToPixels();
+                        float y1 = ((float)pathChunk.StartPath.y).PointsToPixels();
+                        //float y1 = pathChunk.StartPath.y < 0 ? bmp.Height + ((float)pathChunk.StartPath.y).PointsToPixels() : bmp.Height - ((float)pathChunk.StartPath.y).PointsToPixels();
+                        float x2 = ((float)pathChunk.EndPath.x).PointsToPixels();
+                        float y2 = ((float)pathChunk.EndPath.y).PointsToPixels();
+                        //float y2 = pathChunk.EndPath.y < 0 ? bmp.Height + ((float)pathChunk.EndPath.y).PointsToPixels() : bmp.Height - ((float)pathChunk.EndPath.y).PointsToPixels();
+
+                        g.DrawLine(newPen, x1, y1, x2, y2);//绘制直线
+                        //g.DrawLine(newPen, ((float)pathChunk.StartPath.x).PointsToPixels(), bmp.Height - ((float)pathChunk.StartPath.y).PointsToPixels(), ((float)pathChunk.EndPath.x).PointsToPixels(), bmp.Height - ((float)pathChunk.EndPath.y).PointsToPixels());//绘制直线
 
                     }
                 }
